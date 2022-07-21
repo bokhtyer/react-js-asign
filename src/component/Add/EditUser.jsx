@@ -34,12 +34,6 @@ const EditUser = (props) => {
                 history.push("/");
             }
         })
-        // axios.post(`https://60f2479f6d44f300177885e6.mockapi.io/users/${id}`,data).then(res=>{
-        //     if(res.data){
-        //         toast.success('User Updated Successfully');
-        //         history.push("/");
-        //     }
-        // })
     }
 
     console.log(location.first_name);

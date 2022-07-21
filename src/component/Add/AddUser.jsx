@@ -9,38 +9,20 @@ import { toast } from "react-toastify";
 const AddUser = () => {
 
     const history = useHistory();
-    const [adduser, setAdduser] = useState({
-        first_name: '',
-        last_name: '',
-        user_type: '',
-        division:'',
-        district:'',
+
+    const [values, setAdduser] = useState({
+        division: '',
     });
-    const handleInput = (e) => {
-        e.preventDefault();
-        setAdduser({...adduser, [e.target.name]:e.target.value});
+    const handleDivision = (e) => {
+        setAdduser({...values, [e.target.name]:e.target.value});
+        console.log(values.division);
     }
 
-    const stateCode = getStateCode(adduser.division);
-    //to get all the cities of a particular state;
+    const stateCode = getStateCode(values.division);
+        //to get all the cities of a particular state;
     let citiesOfState = City.getCitiesOfState("BD", stateCode);
     
-    const userSubmit = (e) => {
-        e.preventDefault(e);
-        const data = {
-            first_name:adduser.first_name,
-            last_name:adduser.last_name,
-            user_type:adduser.user_type,
-            division:adduser.division,
-            district:adduser.district,
-        }
-        axios.post(`https://60f2479f6d44f300177885e6.mockapi.io/users`,data).then(res=>{
-            if(res.data){
-                toast.success('User Addedd Successfully');
-                history.push("/");
-            }
-        })
-    }
+
 
 
     return(
@@ -54,18 +36,94 @@ const AddUser = () => {
                     <h5 className="modal-title" id="adduserLabel">Add New User</h5>
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                
                 <div className="modal-body">
-                    <form onSubmit={userSubmit}>
+
+
+                    <Formik
+                    initialValues={{ 
+                        first_name: '',
+                        last_name: '',
+                        user_type: '',
+                        division: '',
+                        district: ''
+                    }}
+                    validate={values => {
+                       
+                        const errors = {};
+                        if (!values.first_name) {
+                            errors.first_name = 'Required';
+                        } else if ( values.first_name.length < 2 ) {
+                            errors.first_name = 'Must be use 2 Characters';
+                        }else if ( values.first_name.length > 10 ) {
+                            errors.first_name = 'Must be use > 10 Characters';
+                        }
+
+                        if (!values.last_name) {
+                            errors.last_name = 'Required';
+                        } else if ( values.last_name.length < 2 ) {
+                            errors.last_name = 'Must be use 2 Characters';
+                        }else if ( values.last_name.length > 10 ) {
+                            errors.last_name = 'Must be use > 10 Characters';
+                        }
+
+                        if (!values.user_type) {
+                            errors.user_type = 'Required';
+                        }
+
+                        if(values.user_type === 'employee'){
+                            if (!values.division) {
+                                errors.division = 'Required';
+                            }
+                            if (!values.district) {
+                                errors.district = 'Required';
+                            }
+                        }
+                       
+
+                        return errors;
+                    }}
+                    onSubmit={(values) => {
+                        console.log(values);
+                       
+                        const data = {
+                            first_name:values.first_name,
+                            last_name:values.last_name,
+                            user_type:values.user_type,
+                            division:values.division,
+                            district:values.district,
+                        }
+                        axios.post(`https://60f2479f6d44f300177885e6.mockapi.io/users`,data).then(res=>{
+                            if(res.data){
+                                toast.success('User Addedd Successfully');
+                                history.push("/");
+                            }
+                        })
+                    }}
+                    >
+                    {({
+                        values,
+                        errors,
+                        touched,
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        isSubmitting,
+                        // handleChanged,
+                        /* and other goodies */
+                    }) => (
+                    <form onSubmit={handleSubmit}>
                     <div className='single-input'>
                         <label htmlFor="first_name">First Name</label>
                         <input
                             id="first_name"
                             name="first_name"
                             type="text"
-                            required="required"
-                            onChange={handleInput}
-                            value={adduser.first_name}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.first_name}
                         />
+                        <small className='text-danger'>{errors.first_name && touched.first_name && errors.first_name}</small>
                     </div>
                     <div className='single-input'>
                         <label htmlFor="last_name">Last Name</label>
@@ -73,24 +131,27 @@ const AddUser = () => {
                             id="last_name"
                             name="last_name"
                             type="text"
-                            required="required"
-                            onChange={handleInput}
-                            value={adduser.last_name}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.last_name}
                         />
+                        <small className='text-danger'>{errors.last_name && touched.last_name && errors.last_name}</small>
                     </div>
                     <div className='single-input'>
                         <label htmlFor="role">User Role</label>
                         <select className="form-select" 
                         name="user_type"
-                        onChange={handleInput}
-                        value={adduser.user_type}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.user_type}
                         >
-                            <option>User Role</option>
+                            <option value=''>User Role</option>
                             <option value="admin">Admin</option>
                             <option value="employee">Employee</option>
                         </select>
+                        <small className='text-danger'>{errors.user_type && touched.user_type && errors.user_type}</small>
                     </div>
-                    {adduser.user_type=== 'employee' ?
+                    {values.user_type=== 'employee' ?
                     <>
                         <div className='single-input'>
                             <label htmlFor="role">Division</label>
@@ -98,8 +159,12 @@ const AddUser = () => {
                                 id="division"
                                 name="division"
                                 className="form-select"
-                                onChange={handleInput}
-                                value={adduser.division}
+                                onChange={(e)=>{
+                                    handleChange(e)
+                                    handleDivision(e)
+                                }}
+                                onBlur={handleBlur}
+                                value={values.division}
                             >
                                 <option value="">Select Division</option>
                                 {
@@ -110,6 +175,7 @@ const AddUser = () => {
                                     })
                                 }
                             </select>
+                            <small className='text-danger'>{errors.division && touched.division && errors.division}</small>
                         </div>
                         <div className='single-input'>
                             <label htmlFor="role">District</label>
@@ -118,8 +184,9 @@ const AddUser = () => {
                                 id="district"
                                 name="district"
                                 className="form-select"
-                                onChange={handleInput}
-                                value={adduser.district}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.district}
                             >
                                 <option value="">Select District</option>
                                 {
@@ -130,16 +197,19 @@ const AddUser = () => {
                                     })
                                 }
                             </select>
+                            <small className='text-danger'>{errors.district && touched.district && errors.district}</small>
                         </div>
                     </>
                     :''
                     }
                     <div className='single-input'>
-                        <button
-                        type='submit'
-                          className='btn btn-primary'>Submit User</button>
+                        <button className='btn btn-primary' type="submit" disabled={isSubmitting}>
+                            Submit
+                        </button>
                     </div>
                     </form>
+                    )}
+                    </Formik>
                 </div>
             </div>
         </div>

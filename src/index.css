@@ -116,3 +116,27 @@ ul.list-group li {
     display: flex;
     justify-content: space-between;
 }
+.paginations {
+	margin-bottom: 30px;
+}
+.paginations ul li {
+    display: inline-block;
+    margin: 0px 5px;
+}
+
+.paginations ul li a {
+    display: inline-block;
+    font-size: 14px;
+    text-transform: capitalize;
+    background: var(--headding-color);
+    padding: 6px 20px;
+    color: #fff !important;
+    font-weight: 600;
+}
+
+.paginations ul li.selected a {
+    background: var(--primary-color);
+}
+.paginations ul li.disabled a{
+    cursor: no-drop;
+}

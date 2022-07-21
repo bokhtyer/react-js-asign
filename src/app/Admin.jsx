@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Component } from 'react'
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify'
 import { useHistory } from 'react-router-dom';
 
@@ -15,7 +14,6 @@ const Admin = () => {
                 setAdmin(res.data);
             }
             setLoading(false);
-            console.log(res.data);
         })
        
     },[]);
@@ -40,7 +38,6 @@ const Admin = () => {
         View_All_Admin = 
         admin.map((item,id)=>{
             const handleDetails = (id) => {
-                // history.push(`/view-user/${id}`);
                 history.push({
                     pathname: `/view-user/${item.id}`,
                     first_name: item.first_name,
@@ -67,11 +64,9 @@ const Admin = () => {
                     <td style={{
                         textAlign:'center'
                     }}>
-                        {/* <Link to={`edit-user/${item.id}`}><i className="bi bi-pencil-square"></i></Link> */}
-                        <span
+                       <span
                         style={{
                             cursor:'pointer',
-                            // marginLeft:'15px'
                         }}
                         onClick={handleUpdate}
                         ><i className="bi bi-pencil-square"></i></span>
@@ -97,26 +92,23 @@ const Admin = () => {
     }
 
     return(
-        <div className='all-data-a' style={{marginTop:'30px'}}>
-            <div className='container'>
-                <table className="table table-responsive table-bordered table-striped  table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Type</th>
-                            <th style={{
-                                textAlign:'center'
-                            }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {View_All_Admin}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        
+        <table className="table table-responsive table-bordered table-striped  table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Type</th>
+                    <th style={{
+                        textAlign:'center'
+                    }}>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {View_All_Admin}
+            </tbody>
+        </table>
         
     )
 }

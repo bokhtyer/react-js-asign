@@ -10,8 +10,7 @@ const Header = () => {
                     <div className='col-6 align-self-center'>
                         <div className='menu'>
                             <ul>
-                                <li><Link to='/admin'>Admin</Link></li>
-                                <li><Link to='/employee'>Employee</Link></li>
+                                <li><Link to='/'>Home</Link></li>
                             </ul>
                         </div>
                     </div>

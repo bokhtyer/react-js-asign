@@ -20,12 +20,12 @@ function App() {
           <Route exact path="/">
             <Home />
           </Route>
-          <Route exact path="/admin">
+          {/* <Route exact path="/admin">
             <Admin />
           </Route>
           <Route exact path="/employee">
             <Employee />
-          </Route>
+          </Route> */}
           <Route exact path="/view-user/:id">
             <ViewDetails />
           </Route>
